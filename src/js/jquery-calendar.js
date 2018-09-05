@@ -86,7 +86,9 @@ jQuery(document).ready(function($){
           month: {
             format: (Args.weekday) ? (Args.weekday.dayline) ? (Args.weekday.dayline.month) ? (Args.weekday.dayline.month.format) ? Args.weekday.dayline.month.format : 'MMMM YYYY' : 'MMMM YYYY' : 'MMMM YYYY' : 'MMMM YYYY',
             heightPx: (Args.weekday) ? (Args.weekday.dayline) ? (Args.weekday.dayline.month) ? (Args.weekday.dayline.month.heightPx) ? Args.weekday.dayline.month.heightPx : 30 : 30 : 30 : 30,
-            weekFormat: (Args.weekday) ? (Args.weekday.dayline) ? (Args.weekday.dayline.month) ? (Args.weekday.dayline.month.weekFormat) ? Args.weekday.dayline.month.weekFormat : 'w' : 'w' : 'w' : 'w'
+            weekFormat: (Args.weekday) ? (Args.weekday.dayline) ? (Args.weekday.dayline.month) ? (Args.weekday.dayline.month.weekFormat) ? Args.weekday.dayline.month.weekFormat : 'w' : 'w' : 'w' : 'w',
+	          display_text: (Args.month) ? (Args.month.weekline) ? (Args.month.weekline.display_text) ? Args.month.weekline.display_text : false : false : false,
+	          text: (Args.month) ? (Args.month.weekline) ? (Args.month.weekline.text) ? Args.month.weekline.text : 'View Week' : 'View Week' : 'View Week'
           }
         }
       },
@@ -95,7 +97,9 @@ jQuery(document).ready(function($){
         heightPx: (Args.month) ? (Args.month.heightPx) ? (Args.month.heightPx > 31) ? Args.month.heightPx : 31 : 31 : 31,
         weekline: {
           format: (Args.month) ? (Args.month.weekline) ? (Args.month.weekline.format) ? Args.month.weekline.format : 'w' : 'w' : 'w',
-          heightPx: (Args.month) ? (Args.month.weekline) ? (Args.month.weekline.heightPx) ? Args.month.weekline.heightPx : 80 : 80 : 80
+          heightPx: (Args.month) ? (Args.month.weekline) ? (Args.month.weekline.heightPx) ? Args.month.weekline.heightPx : 80 : 80 : 80,
+	        display_text: (Args.month) ? (Args.month.day) ? (Args.month.day.display_text) ? Args.month.day.display_text : false : false : false,
+	        text: (Args.month) ? (Args.month.day) ? (Args.month.day.text) ? Args.month.day.text : 'View Week' : 'View Week' : 'View Week'
         },
         dayheader: {
           weekdays: (Args.month) ? (Args.month.dayheader) ? (Args.month.dayheader.weekdays) ? Args.month.dayheader.weekdays : [0, 1, 2, 3, 4, 5, 6] : [0, 1, 2, 3, 4, 5, 6] : [0, 1, 2, 3, 4, 5, 6],
@@ -380,7 +384,11 @@ jQuery(document).ready(function($){
       div.addClass('weektomonth');
     }
     if (this.getView() == 'day'){
-      div.text(this.miscUcfirstString(moment.unix(this.conf.unixTimestamp).format(this.conf.weekday.dayline.month.weekFormat)));
+	    if (this.conf.weekday.dayline.month.display_text) {
+		    div.text(this.conf.weekday.dayline.month.text);
+	    } else {
+		    div.text(this.miscUcfirstString(moment.unix(this.conf.unixTimestamp).format(this.conf.weekday.dayline.month.weekFormat)));
+	    }
       div.addClass('daytoweek');
     }
     $(this.element).find('div.calendar-events').append(div);
@@ -543,10 +551,20 @@ jQuery(document).ready(function($){
       li = $('<li>', {
         class: 'monthtoweek'
       });
-      li.append($('<span>')
-        .attr('data-timestamp', time.format('X'))
-        .text(time.format(this.conf.month.weekline.format)).css('margin-top', this.conf.month.weekline.heightPx/2+'px')
-      );
+	    if (this.conf.month.weekline.display_text) {
+		    li.append($('<span>')
+				    .attr('data-timestamp', time.format('X'))
+            // text to display in place of week formatting
+				    .text(this.conf.month.weekline.text)
+				    .css('margin-top', this.conf.month.weekline.heightPx/2+'px')
+				    .css('text-decoration', 'underline')
+		    );
+	    } else {
+		    li.append($('<span>')
+				    .attr('data-timestamp', time.format('X'))
+				    .text(time.format(this.conf.month.weekline.format)).css('margin-top', this.conf.month.weekline.heightPx/2+'px')
+		    );
+	    }
       li.height(this.conf.month.weekline.heightPx);
       ul.append(li);
       while (parseInt(time.format('w')) == week){
